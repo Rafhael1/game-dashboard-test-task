@@ -62,7 +62,7 @@ const Games = () => {
   });
 
   const filterGames = (filter: any) => {
-    const filteredData = filterData(gamesData.data, filter);
+    const filteredData = filterData(gamesData?.data, filter);
     setGamesDataAux({
       ...gamesData,
       data: filteredData,

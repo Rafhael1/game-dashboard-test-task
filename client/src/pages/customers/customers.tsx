@@ -51,7 +51,7 @@ const Customers = () => {
   });
 
   const filterCustomers = (filter: any) => {
-    const filteredData = filterData(customersData.data, filter);
+    const filteredData = filterData(customersData?.data, filter);
     setCustomersDataAux({
       ...customersData,
       data: filteredData,
