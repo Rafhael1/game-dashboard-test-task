@@ -50,6 +50,8 @@ Filtering by customer/game creation date.
 ## Points to improve 
 Since time wasn't on my side, I had to make some compromises.
 
+- [] Since it's a test for a frontend role I didn't implement the filter on the backend, which would have been easier.
+
 - [ ] Error messages are generic, they should be more detailed and also come from the api.
 - [ ] Form validation is not implemented and could be on either frontend or backend (if on backend it would possibly solve the generic messages issue).
 
