@@ -10,9 +10,21 @@ import Modal from '../../components/modal/modal';
 import filterData from '../../utils/filterData';
 import { addCustomer, deleteCustomer, editCustomer } from '../../services/customerService';
 import ConfirmDialog from '../../components/confirmDialog/confirmDialog';
+import { Category } from '../../interfaces/categories';
 
+interface FilterProps {
+  categories: Category[];
+  handleOnChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void;
+  values: {
+    startDate?: string;
+    endDate?: string;
+    name: string;
+    email: string;
+    address: string;
+  };
+}
 
-const Filter = ({ categories, handleOnChange, values }: any) => {
+const Filter = ({ categories, handleOnChange, values }: FilterProps) => {
   return (
     <> 
      {/* Creation Date  */}
@@ -62,7 +74,7 @@ const Customers = () => {
     filterCustomers(filter);
   }, [filter]);
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFilter({
       ...filter,
       [e.target.name]: e.target.value,

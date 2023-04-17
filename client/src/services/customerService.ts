@@ -1,3 +1,4 @@
+import { Customer } from "../interfaces/customer";
 import requester from "../utils/requester";
 
 export const getCustomers = async() => {
@@ -7,14 +8,14 @@ export const getCustomers = async() => {
     console.log(error);
 }};
 
-export const addCustomer = async(customer: any) => {
+export const addCustomer = async(customer: Customer) => {
   try {
     return (await requester.post('/customers', customer))?.data;
   } catch (error) {
     console.log(error);
 }}
 
-export const editCustomer = async(id: number, customer: any) => {
+export const editCustomer = async(id: number, customer: Customer) => {
   try {
     return (await requester.put(`/customers/${id}`, customer))?.data;
   } catch (error) {

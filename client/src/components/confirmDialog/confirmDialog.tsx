@@ -3,7 +3,18 @@ import IconBase from '../iconbase/iconbase';
 import { faClose, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Button from '../button/button';
 
-const ConfirmDialog = ({ message, isOpen, onClose, onConfirm, title, loading }: any) => {
+interface ConfirmModalProps {
+  children: React.ReactNode;
+  isOpen: boolean;
+  disabledSave?: boolean;
+  onClose: () => void;
+  onConfirm?: () => Promise<void>;
+  title: string;
+  loading?: boolean;
+  message?: string;
+}
+
+const ConfirmDialog = ({ message, isOpen, onClose, onConfirm, title, loading }: ConfirmModalProps) => {
   const handleConfirm = async() => {
     if(onConfirm){
       await onConfirm();

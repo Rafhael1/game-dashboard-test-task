@@ -1,6 +1,16 @@
 import React from 'react'
 
-const Button = ({ children, disabled, onClick, color, ...props }: any) => {
+interface ButtonProps {
+  children: React.ReactNode;
+  disabled?: boolean;
+  onClick?: () => void;
+  color?: 'primary' | 'success' | 'danger' | 'warning' | 'info';
+  type?: 'button' | 'submit' | 'reset';
+  className?: string;
+  id?: string;
+}
+
+const Button = ({ children, disabled, onClick, color, type, ...props }: ButtonProps) => {
   
     const getColor = () => {
       switch (color) {
@@ -22,9 +32,9 @@ const Button = ({ children, disabled, onClick, color, ...props }: any) => {
           id='dropdownRadioButton'
           data-dropdown-toggle='dropdownRadio'
           className={`${getColor()} ${disabled && 'cursor-not-allowed'} pt-2 pb-2 pr-6 pl-6 transition-colors items-center focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-3 py-1.5 bg-primary text-white hover:bg-indigo-600 hover:border-ray-600 focus:ring-indigo-700`}
-          type='button'
           disabled={disabled}
           onClick={onClick}
+          type={type}
           {...props}
         >
         {children}

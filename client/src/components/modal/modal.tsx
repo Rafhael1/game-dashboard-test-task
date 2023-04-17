@@ -3,7 +3,17 @@ import Button from '../button/button'
 import IconBase from '../iconbase/iconbase';
 import { faClose, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-const Modal = ({ children, isModalOpen, disabledSave, handleClose, onConfirm, title, loading }: any) => {
+interface ModalProps {
+  children: React.ReactNode;
+  isModalOpen: boolean;
+  disabledSave?: boolean;
+  handleClose: () => void;
+  onConfirm?: () => Promise<void>;
+  title: string;
+  loading?: boolean;
+}
+
+const Modal = ({ children, isModalOpen, disabledSave, handleClose, onConfirm, title, loading }: ModalProps) => {
   const handleConfirm = async() => {
     if(onConfirm){
       await onConfirm();

@@ -10,6 +10,7 @@ import ConfirmDialog from '../../components/confirmDialog/confirmDialog';
 import Modal from '../../components/modal/modal';
 import IconButton from '../../components/iconButton/iconButton';
 import { addGame, deleteGame, editGame } from '../../services/gamesService';
+import { Game } from '../../interfaces/games';
 
 const Filter = ({ categories, handleOnChange }: any) => {
   return (
@@ -49,7 +50,7 @@ const Games = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editId, setEditId] = useState(null);
+  const [editId, setEditId] = useState<number>();
   const [gamesDataAux, setGamesDataAux] = useState<any>([]);
   const [modalForm, setModalForm] = useState({
     game_name: '',
@@ -100,15 +101,17 @@ const Games = () => {
     {
       label: 'Created At',
       selector: 'createdAt',
-      format: (row: any) => format(parseISO(row.createdAt), "dd/MM/yyyy")
+      format: (row: Game) => format(parseISO(row.createdAt || ''), "dd/MM/yyyy")
     },
     {
       label: 'Actions',
-      render: (row: any) => (
+      render: (row: Game) => (
         <div className="flex space-x-2">
           <IconButton color="info" onClick={() => {
             setIsEditing(true);
-            setEditId(row.id);
+            if(row.id){
+              setEditId(row.id);
+            }
             setModalForm({
               game_name: row.game_name,
               category: row.category,

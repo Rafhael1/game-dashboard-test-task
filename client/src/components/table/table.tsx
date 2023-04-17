@@ -30,7 +30,6 @@ const Table = ({ columns, data, filter, isLoading }: TableProps) => {
     <>
       <div ref={backdropRef} className='mb-4 justify-end flex'>
         <Button
-          id='dropdownRadioButton'
           data-dropdown-toggle='dropdownRadio'
           className='pt-2 pb-2 pr-6 pl-6 transition-colors inline-flex items-center focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-3 py-1.5 bg-primary text-white hover:bg-indigo-600 hover:border-ray-600 focus:ring-indigo-700'
           type='button'

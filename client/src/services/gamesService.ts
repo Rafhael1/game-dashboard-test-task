@@ -1,3 +1,4 @@
+import { Game } from "../interfaces/games";
 import requester from "../utils/requester";
 
 export const getGames = async() => {
@@ -7,14 +8,14 @@ export const getGames = async() => {
     console.log(error);
 }};
 
-export const addGame = async(game: any) => {
+export const addGame = async(game: Game) => {
   try {
     return (await requester.post('/games', game))?.data;
   } catch (error) {
     console.log(error);
 }}
 
-export const editGame = async(id: number, game: any) => {
+export const editGame = async(id: number, game: Game) => {
   try {
     return (await requester.put(`/games/${id}`, game))?.data;
   } catch (error) {
