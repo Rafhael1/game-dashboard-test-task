@@ -47,9 +47,11 @@ Filtering by game category ( on the game page ).
 
 Filtering by customer/game creation date.
 
-## Points to improve
+## Points to improve 
+Since time wasn't on my side, I had to make some compromises.
 
-- [ ] Adjust typescript types.
+- [ ] Error messages are generic, they should be more detailed and also come from the api.
+- [ ] Form validation is not implemented and could be on either frontend or backend (if on backend it would possibly solve the generic messages issue).
 
 ## Observations
 
