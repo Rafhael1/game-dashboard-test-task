@@ -185,7 +185,7 @@ const Games = () => {
       filter={<Filter handleOnChange={handleOnChange} categories={categories} />}
       isLoading={loading}
       />
-    <Modal disabledSave={!canSaveNew} onConfirm={handleModalSave} loading={isLoadingSubmit} title={isEditing ? 'Edit Game' : 'Create Game'} handleClose={handleCloseModal} isModalOpen={isModalOpen}>
+    <Modal disabledSave={false} onConfirm={handleModalSave} loading={isLoadingSubmit} title={isEditing ? 'Edit Game' : 'Create Game'} handleClose={handleCloseModal} isModalOpen={isModalOpen}>
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col space-y-2">
           <label className='text-white' htmlFor="name">Name</label>
