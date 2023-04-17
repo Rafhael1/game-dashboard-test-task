@@ -10,7 +10,31 @@ export class CustomersService {
   ) {}
 
   create(createCustomerDto: CreateCustomerDto) {
-    return 'This action adds a new customer';
+    try {
+      return this.sequelize.query(`
+        INSERT INTO customers (name, email, address)
+        VALUES ('${createCustomerDto.name}', '${createCustomerDto.email}', '${createCustomerDto.address}')
+      `);
+    }
+    catch (error) {
+      throw BadRequestException;
+    }
+  }
+
+  async update(id: number, updateCustomerDto: UpdateCustomerDto) {
+    try {
+      const data = (await this.sequelize.query(`
+        UPDATE customers
+        SET name = '${updateCustomerDto.name}',
+        email = '${updateCustomerDto.email}',
+        address = '${updateCustomerDto.address}'
+        WHERE id = ${id}
+      `))?.[0];
+
+      return data;
+    } catch (error) {
+      throw BadRequestException;
+    }
   }
 
   async findAll() {
@@ -26,6 +50,13 @@ export class CustomersService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} customer`;
+    try {
+      return this.sequelize.query(`
+        DELETE FROM customers
+        WHERE id = ${id}
+      `);
+    } catch (error) {
+      throw BadRequestException;
+    }
   }
 }

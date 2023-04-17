@@ -9,8 +9,22 @@ export class GamesService {
     private sequelize: Sequelize,
   ) {}
 
-  create(createGameDto: CreateGameDto) {
-    return 'This action adds a new game';
+  async create(createGameDto: CreateGameDto) {
+    try {
+      const category: any = (await this.sequelize.query(`
+        SELECT id FROM game_categories WHERE name = '${createGameDto.category}';
+      `))?.[0][0];
+
+      if(!category) throw BadRequestException;
+
+      return this.sequelize.query(`
+        INSERT INTO games (name, category_id)
+        VALUES ('${createGameDto.game_name}', ${category.id});
+      `);
+    }
+    catch (error) {
+      throw BadRequestException;
+    }
   }
 
   async findAll() {
@@ -31,15 +45,34 @@ export class GamesService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} game`;
+  async update(id: number, updateGameDto: UpdateGameDto) {
+    try {
+      const category: any = (await this.sequelize.query(`
+        SELECT id FROM game_categories WHERE name = '${updateGameDto.category}';
+      `))?.[0][0];
+
+      if(!category) throw BadRequestException;
+
+      return this.sequelize.query(`
+        UPDATE games
+        SET name = '${updateGameDto.game_name}',
+        category_id = ${category.id}
+        WHERE id = ${id}
+      `);
+    }
+    catch (error) {
+      throw BadRequestException;
+    }
   }
 
-  update(id: number, updateGameDto: UpdateGameDto) {
-    return `This action updates a #${id} game`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} game`;
+  async remove(id: number) {
+    try {
+      return this.sequelize.query(`
+        DELETE FROM games WHERE id = ${id};
+      `);
+    }
+    catch (error) {
+      throw BadRequestException;
+    }
   }
 }

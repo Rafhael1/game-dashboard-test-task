@@ -10,7 +10,7 @@ const filterData = (data: any, filter: any) => {
       const isAfterStartDate = isAfter(creationDate, parseISO(startDate));
       const isBeforeEndDate = isBefore(creationDate, parseISO(endDate));
       const isSameDate = creationDate.getTime() === parseISO(startDate).getTime() || creationDate.getTime() === parseISO(endDate).getTime();
-      return isAfterStartDate && (isBeforeEndDate || isSameDate);
+      return (isAfterStartDate || isSameDate) && (isBeforeEndDate || isSameDate);
     });
     filteredData = filteredDataByDate;
   }

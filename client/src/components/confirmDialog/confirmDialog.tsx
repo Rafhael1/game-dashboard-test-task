@@ -1,19 +1,19 @@
 import React from 'react'
-import Button from '../button/button'
 import IconBase from '../iconbase/iconbase';
 import { faClose, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import Button from '../button/button';
 
-const Modal = ({ children, isModalOpen, disabledSave, handleClose, onConfirm, title, loading }: any) => {
+const ConfirmDialog = ({ message, isOpen, onClose, onConfirm, title, loading }: any) => {
   const handleConfirm = async() => {
     if(onConfirm){
       await onConfirm();
     }
-    handleClose();
+    onClose();
   }
-
+  
   return (
     <>
-      {isModalOpen && (
+      {isOpen && (
         <div
           // ref={ref}
           id='staticModal'
@@ -33,29 +33,30 @@ const Modal = ({ children, isModalOpen, disabledSave, handleClose, onConfirm, ti
                   type='button'
                   className='text-gray-400 bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-white'
                   data-modal-hide='staticModal'
-                  onClick={() => handleClose()}
+                  onClick={() => onClose()}
                 >
                   <IconBase icon={faClose} />
                 </button>
               </div>
               {/* <!-- Modal body --> */}
               <div className='p-6 space-y-6'>
-                {children}
+                <p className='text-white '>
+                  {message}
+                </p>
               </div>
               {/* <!-- Modal footer --> */}
               <div className='flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600'>
                 <Button
-                  disabled={disabledSave}
                   data-modal-hide='staticModal'
                   type='button'
-                  color='success'                  
+                  color='success'
                   onClick={() => handleConfirm()}
                 >
-                  Save
+                  Confirm
                   {loading && <IconBase className='ml-2' icon={faSpinner} spin />}
                 </Button>
                 <Button
-                  onClick={() => handleClose()}
+                  onClick={onClose}
                   data-modal-hide='staticModal'
                   type='button'
                   color='danger'
@@ -71,4 +72,4 @@ const Modal = ({ children, isModalOpen, disabledSave, handleClose, onConfirm, ti
   )
 }
 
-export default Modal
+export default ConfirmDialog;

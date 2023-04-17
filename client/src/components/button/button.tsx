@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Button = ({ children, onClick, color, ...props }: any) => {
+const Button = ({ children, disabled, onClick, color, ...props }: any) => {
   
     const getColor = () => {
       switch (color) {
@@ -21,9 +21,11 @@ const Button = ({ children, onClick, color, ...props }: any) => {
         <button
           id='dropdownRadioButton'
           data-dropdown-toggle='dropdownRadio'
-          className={`${getColor()} pt-2 pb-2 pr-6 pl-6 transition-colors items-center focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-3 py-1.5 bg-primary text-white hover:bg-indigo-600 hover:border-ray-600 focus:ring-indigo-700`}
+          className={`${getColor()} ${disabled && 'cursor-not-allowed'} pt-2 pb-2 pr-6 pl-6 transition-colors items-center focus:outline-none focus:ring-4 font-medium rounded-lg text-sm px-3 py-1.5 bg-primary text-white hover:bg-indigo-600 hover:border-ray-600 focus:ring-indigo-700`}
           type='button'
+          disabled={disabled}
           onClick={onClick}
+          {...props}
         >
         {children}
       </button>

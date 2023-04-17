@@ -8,14 +8,15 @@ import { faAdd, faEdit, faTrash, faSpinner } from '@fortawesome/free-solid-svg-i
 import Button from '../../components/button/button';
 import Modal from '../../components/modal/modal';
 import filterData from '../../utils/filterData';
-import { addCustomer } from '../../services/customerService';
+import { addCustomer, deleteCustomer, editCustomer } from '../../services/customerService';
+import ConfirmDialog from '../../components/confirmDialog/confirmDialog';
 
 
-const Filter = ({ categories, handleOnChange }: any) => {
+const Filter = ({ categories, handleOnChange, values }: any) => {
   return (
     <> 
      {/* Creation Date  */}
-    <div className='p-2 border-b border-slate-700'>
+    <div className='p-2'>
       <h3 className='text-lg mb-2 font-bold'>Creation Date</h3> 
       <div>
         <label htmlFor='startDate'>From</label>  
@@ -23,19 +24,7 @@ const Filter = ({ categories, handleOnChange }: any) => {
         <label htmlFor='endDate'>To</label>
         <input onChange={(e) => handleOnChange(e)} name='endDate' type="date" className="mt-1 text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500" placeholder="End date" />
       </div>    
-    </div> 
-    {/* Category */}
-    <div className='p-2 border-b border-slate-700'>
-      <h3 className='text-lg mb-2 font-bold'>Game Category</h3> 
-      <select onChange={() => console.log('s')} className="mt-1 text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500">
-        {
-          categories?.map((category: any) => (
-            <option key={category.id} value={category.id}>{category.name}</option>
-          ))
-        }
-      </select> 
-    </div> 
-
+    </div>
     </>
   )
 };
@@ -44,7 +33,11 @@ const Customers = () => {
   const { customersData, getCustomers, loading } = useContext(CustomerContext);
   const { categories, getCategories } = useContext(CategoriesContext);
   
+  const [canSaveNew, setCanSaveNew] = useState(false);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [editId, setEditId] = useState<any>(null); // Used to delete too
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [customersDataAux, setCustomersDataAux] = useState<any>([]);
   const [filter, setFilter] = useState({
@@ -81,6 +74,7 @@ const Customers = () => {
       ...modalForm,
       [e.target.name]: e.target.value,
     });
+    setCanSaveNew(!!(modalForm.name && modalForm.email && modalForm.address));
   };
 
   const tableColumns = [
@@ -107,18 +101,61 @@ const Customers = () => {
         <div className="flex space-x-2">
           <IconButton color="info" onClick={() => {
             setIsEditing(true);
+            setEditId(row.id);
+            setModalForm({
+              name: row.name,
+              email: row.email,
+              address: row.address,
+            });
             handleOpenModal();
 
           }}>
             <IconBase icon={faEdit} />
           </IconButton>
-          <IconButton color="danger" onClick={() => console.log('edit')}>
+          <IconButton color="danger" onClick={() => {
+            setIsDeleteModalOpen(true)
+            setEditId(row.id);
+          }
+          }>
             <IconBase icon={faTrash} />
           </IconButton>
         </div>
       )
     }
   ];
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteCustomer = async() => {
+    try {
+      setIsLoadingSubmit(true);
+      await deleteCustomer(editId);
+      await getCustomers();
+      setIsLoadingSubmit(false);
+      setIsDeleteModalOpen(false);
+    } catch (error) {
+      setIsDeleteModalOpen(false);
+    }
+  };
+
+  const handleModalSave = async() => {
+    setIsLoadingSubmit(true);
+    try {
+      if(isEditing && editId){
+        await editCustomer(editId, modalForm);
+      } else {
+        await addCustomer(modalForm);
+      }
+      setIsModalOpen(false);
+      await getCustomers();  
+      setIsLoadingSubmit(false);
+    } catch (error) {
+      setIsLoadingSubmit(false);
+      setIsModalOpen(false);
+    }
+  }
 
   useEffect(() => {
     if(customersData){
@@ -131,14 +168,6 @@ const Customers = () => {
     getCategories();
   }, []);
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalSave = async() => {
-    await addCustomer(modalForm);
-    setIsModalOpen(false);
-  }
 
   return (
     <>
@@ -152,25 +181,35 @@ const Customers = () => {
     <Table
       columns={tableColumns}
       data={customersDataAux.data}
-      filter={<Filter handleOnChange={handleOnChange} categories={categories} />}
+      filter={<Filter values={modalForm} handleOnChange={handleOnChange} categories={categories} />}
       isLoading={loading}
     />
-    <Modal onConfirm={handleModalSave} loading={loading} title={isEditing ? 'Edit Customer' : 'Create Customer'} handleClose={() => setIsModalOpen(false)} isModalOpen={isModalOpen}>
+    <Modal disabledSave={!canSaveNew} onConfirm={handleModalSave} loading={isLoadingSubmit} title={isEditing ? 'Edit Customer' : 'Create Customer'} handleClose={() => setIsModalOpen(false)} isModalOpen={isModalOpen}>
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col space-y-2">
           <label className='text-white' htmlFor="name">Name</label>
-          <input onChange={handleOnChangeModal} type="text" name="name" id="name" className="text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500" placeholder="Name" />
+          <input onChange={handleOnChangeModal} value={modalForm.name} type="text" name="name" id="name" className="text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500" placeholder="Name" />
         </div>
         <div className="flex flex-col space-y-2">
           <label className='text-white' htmlFor="email">Email</label>
-          <input onChange={handleOnChangeModal} type="email" name="email" id="email" className="text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500" placeholder="Email" />
+          <input onChange={handleOnChangeModal} value={modalForm.email} type="email" name="email" id="email" className="text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500" placeholder="Email" />
         </div>
         <div className="flex flex-col space-y-2">
           <label className='text-white' htmlFor="address">Address</label>
-          <input onChange={handleOnChangeModal} type="text" name="address" id="address" className="text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500" placeholder="Address" />
+          <input onChange={handleOnChangeModal} value={modalForm.address} type="text" name="address" id="address" className="text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500" placeholder="Address" />
         </div>
       </div>
     </Modal>
+    {/* Delete Confirm Modal */}
+    <ConfirmDialog
+      title="Delete Customer"
+      message="Are you sure you want to delete this customer?"
+      isOpen={isDeleteModalOpen}
+      loading={isLoadingSubmit}
+      onConfirm={handleDeleteCustomer}
+      onClose={() => setIsDeleteModalOpen(false)}
+    >
+    </ConfirmDialog>
     </>
   )
 };

@@ -1,9 +1,15 @@
 import React, { useEffect, useContext, useState, useMemo } from 'react';
-import { Table } from '../../components';
+import { IconBase, Table } from '../../components';
 import { GamesContext } from '../../context/gamesContext';
 import { CategoriesContext } from '../../context/categoriesContext';
 import { isBefore, isAfter, format, parseISO } from 'date-fns'
 import filterData from '../../utils/filterData';
+import Button from '../../components/button/button';
+import { faAdd, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import ConfirmDialog from '../../components/confirmDialog/confirmDialog';
+import Modal from '../../components/modal/modal';
+import IconButton from '../../components/iconButton/iconButton';
+import { addGame, deleteGame, editGame } from '../../services/gamesService';
 
 const Filter = ({ categories, handleOnChange }: any) => {
   return (
@@ -22,6 +28,7 @@ const Filter = ({ categories, handleOnChange }: any) => {
     <div className='p-2 border-b border-slate-700'>
       <h3 className='text-lg mb-2 font-bold'>Game Category</h3> 
       <select name='category' onChange={(e) => handleOnChange(e)} className="mt-1 text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500">
+        <option value=''>All</option>
         {
           categories?.map((category: any) => (
             <option key={category.id} value={category.name}>{category.name}</option>
@@ -33,11 +40,21 @@ const Filter = ({ categories, handleOnChange }: any) => {
   )
 };
 
-const Customers = () => {
+const Games = () => {
   const { gamesData, getGames, loading } = useContext(GamesContext);
   const { categories, getCategories } = useContext(CategoriesContext);
   
+  const [canSaveNew, setCanSaveNew] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
   const [gamesDataAux, setGamesDataAux] = useState<any>([]);
+  const [modalForm, setModalForm] = useState({
+    game_name: '',
+    category: '',
+  });
   const [filter, setFilter] = useState({
     startDate: '',
     endDate: '',
@@ -63,6 +80,14 @@ const Customers = () => {
     });
   };
 
+  const handleOnChangeModal = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setModalForm({
+      ...modalForm,
+      [e.target.name]: e.target.value,
+    });
+    setCanSaveNew(!!(modalForm.game_name && modalForm.category));
+  };
+
   const tableColumns = [
     {
       label: 'Name',
@@ -76,8 +101,76 @@ const Customers = () => {
       label: 'Created At',
       selector: 'createdAt',
       format: (row: any) => format(parseISO(row.createdAt), "dd/MM/yyyy")
+    },
+    {
+      label: 'Actions',
+      render: (row: any) => (
+        <div className="flex space-x-2">
+          <IconButton color="info" onClick={() => {
+            setIsEditing(true);
+            setEditId(row.id);
+            setModalForm({
+              game_name: row.game_name,
+              category: row.category,
+            });
+            handleOpenModal();
+
+          }}>
+            <IconBase icon={faEdit} />
+          </IconButton>
+          <IconButton color="danger" onClick={() => {
+            setIsDeleteModalOpen(true)
+            setEditId(row.id);
+          }
+          }>
+            <IconBase icon={faTrash} />
+          </IconButton>
+        </div>
+      )
     }
   ];
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    if(isEditing){
+      setIsEditing(false);
+      setModalForm({ game_name: '', category: ''})
+    }
+    setIsModalOpen(false);
+  }
+
+  const handleDeleteGame = async() => {
+    try {
+      setIsLoadingSubmit(true);
+      if(!editId) return;
+      await deleteGame(editId);
+      await getGames();
+      setIsLoadingSubmit(false);
+      setIsDeleteModalOpen(false);
+    } catch (error) {
+      setIsDeleteModalOpen(false);
+    }
+  };
+
+  const handleModalSave = async() => {
+    setIsLoadingSubmit(true);
+    try {
+      if(isEditing && editId){
+        await editGame(editId, modalForm);
+      } else {
+        await addGame(modalForm);
+      }
+      setIsModalOpen(false);
+      await getGames();  
+      setIsLoadingSubmit(false);
+    } catch (error) {
+      setIsLoadingSubmit(false);
+      setIsModalOpen(false);
+    }
+  }
 
   useEffect(() => {
     if(gamesData){
@@ -91,13 +184,51 @@ const Customers = () => {
   }, []);
 
   return (
+    <>
+    <div className='flex mobile:justify-between justify-between mt-0 mb-4 border-b border-slate-700 pb-4'>
+      <h1 className='text-3xl mobile:text-2xl font-bold text-white'>Games</h1>
+      <Button onClick={handleOpenModal}>
+        Add Game
+        <IconBase className='ml-2' icon={faAdd} />
+      </Button>
+    </div>
     <Table
       columns={tableColumns}
       data={gamesDataAux.data}
       filter={<Filter handleOnChange={handleOnChange} categories={categories} />}
       isLoading={loading}
-    />
+      />
+    <Modal disabledSave={!canSaveNew} onConfirm={handleModalSave} loading={isLoadingSubmit} title={isEditing ? 'Edit Game' : 'Create Game'} handleClose={handleCloseModal} isModalOpen={isModalOpen}>
+      <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-2">
+          <label className='text-white' htmlFor="name">Name</label>
+          <input onChange={handleOnChangeModal} value={modalForm.game_name} type="text" name="game_name" id="name" className="text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500" placeholder="Name" />
+        </div>
+        <div className="flex flex-col space-y-2">
+          <label className='text-white' htmlFor="category">Category</label>
+          <select name='category' onChange={handleOnChangeModal} value={modalForm.category} className="mt-1 text-sm rounded-lg  block w-full pl-2 p-2.5 bg-gray-700 placeholder-gray-400 text-white focus:ring-indigo-500 focus:border-indigo-500">
+            <option value="">Select a category</option>
+            {
+              categories?.map((category: any) => (
+                <option key={category.id} value={category.name}>{category.name}</option>
+              ))
+            }
+          </select> 
+        </div>        
+      </div>
+    </Modal>
+    {/* Delete Confirm Modal */}
+    <ConfirmDialog
+      title="Delete Game"
+      message="Are you sure you want to delete this game?"
+      isOpen={isDeleteModalOpen}
+      loading={isLoadingSubmit}
+      onConfirm={handleDeleteGame}
+      onClose={() => setIsDeleteModalOpen(false)}
+    >
+    </ConfirmDialog>
+    </>
   )
 };
 
-export default Customers;
+export default Games;
