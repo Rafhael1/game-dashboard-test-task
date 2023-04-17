@@ -4,4 +4,5 @@ export interface IMenuItems {
   key: string;
   title: string;
   icon: ReactElement;
+  path: string;
 }

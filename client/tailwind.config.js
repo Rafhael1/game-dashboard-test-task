@@ -18,6 +18,8 @@ export default {
      colors: {
       'background': 'rgb(45, 47, 60)',
       'background-secondary': 'rgb(48, 50, 65)',
+      'background-tertiary': '#1b1c24',
+      'background-quaternary': '#20222b',
       'primary': 'rgb(107, 105, 250)',
       ...colors,
      }

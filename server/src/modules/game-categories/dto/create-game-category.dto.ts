@@ -1,1 +1,3 @@
-export class CreateGameCategoryDto {}
+export class CreateGameCategoryDto {
+  name: string;
+}
