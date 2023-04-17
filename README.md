@@ -53,6 +53,9 @@ Filtering by customer/game creation date.
 
 ## Observations
 
+Context and request code might no be the cleanest, I mostly work with
+redux and so I'm not used to the context way of doing things.
+
 The server is running on port 8080, and
 the client is running on port 3000.
 
