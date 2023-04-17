@@ -17,7 +17,7 @@ export class CustomersService {
       `);
     }
     catch (error) {
-      throw BadRequestException;
+      throw new BadRequestException;
     }
   }
 
@@ -33,7 +33,7 @@ export class CustomersService {
 
       return data;
     } catch (error) {
-      throw BadRequestException;
+      throw new BadRequestException;
     }
   }
 
@@ -45,7 +45,7 @@ export class CustomersService {
 
       return data;
     } catch (error) {
-      throw BadRequestException;
+      throw new BadRequestException;
     }
   }
 
@@ -56,7 +56,7 @@ export class CustomersService {
         WHERE id = ${id}
       `);
     } catch (error) {
-      throw BadRequestException;
+      throw new BadRequestException;
     }
   }
 }

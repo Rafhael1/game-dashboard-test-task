@@ -16,7 +16,7 @@ export class GameCategoriesService {
 
       return data;
     } catch (error) {
-      throw BadRequestException;
+      throw new BadRequestException;
     }
   }
 }

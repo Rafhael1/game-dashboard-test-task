@@ -23,7 +23,7 @@ export class GamesService {
       `);
     }
     catch (error) {
-      throw BadRequestException;
+      throw new BadRequestException;
     }
   }
 
@@ -41,7 +41,7 @@ export class GamesService {
 
       return data;
     } catch (error) {
-      throw BadRequestException;
+      throw new BadRequestException;
     }
   }
 
@@ -61,7 +61,7 @@ export class GamesService {
       `);
     }
     catch (error) {
-      throw BadRequestException;
+      throw new BadRequestException;
     }
   }
 
@@ -72,7 +72,7 @@ export class GamesService {
       `);
     }
     catch (error) {
-      throw BadRequestException;
+      throw new BadRequestException;
     }
   }
 }
