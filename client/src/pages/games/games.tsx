@@ -2,14 +2,13 @@ import React, { useEffect, useContext, useState, useMemo } from 'react';
 import { IconBase, Table } from '../../components';
 import { GamesContext } from '../../context/gamesContext';
 import { CategoriesContext } from '../../context/categoriesContext';
-import { isBefore, isAfter, format, parseISO } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import filterData from '../../utils/filterData';
 import Button from '../../components/button/button';
 import { faAdd, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import ConfirmDialog from '../../components/confirmDialog/confirmDialog';
 import Modal from '../../components/modal/modal';
 import IconButton from '../../components/iconButton/iconButton';
-import { addGame, deleteGame, editGame } from '../../services/gamesService';
 import { Game } from '../../interfaces/games';
 
 const Filter = ({ categories, handleOnChange }: any) => {
@@ -42,13 +41,12 @@ const Filter = ({ categories, handleOnChange }: any) => {
 };
 
 const Games = () => {
-  const { gamesData, getGames, loading } = useContext(GamesContext);
+  const { gamesData, addGame, editGame, deleteGame, getGames, isLoadingSubmit, loading } = useContext(GamesContext);
   const { categories, getCategories } = useContext(CategoriesContext);
   
   const [canSaveNew, setCanSaveNew] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState<number>();
   const [gamesDataAux, setGamesDataAux] = useState<any>([]);
@@ -146,31 +144,17 @@ const Games = () => {
   }
 
   const handleDeleteGame = async() => {
-    try {
-      setIsLoadingSubmit(true);
-      if(!editId) return;
-      await deleteGame(editId);
-      await getGames();
-      setIsLoadingSubmit(false);
-      setIsDeleteModalOpen(false);
-    } catch (error) {
-      setIsDeleteModalOpen(false);
-    }
+    if(!editId) return;
+    await deleteGame(editId);
+    setIsDeleteModalOpen(false);
   };
 
   const handleModalSave = async() => {
-    setIsLoadingSubmit(true);
-    try {
-      if(isEditing && editId){
-        await editGame(editId, modalForm);
-      } else {
-        await addGame(modalForm);
-      }
+    if(isEditing && editId){
+      await editGame(editId, modalForm);
       setIsModalOpen(false);
-      await getGames();  
-      setIsLoadingSubmit(false);
-    } catch (error) {
-      setIsLoadingSubmit(false);
+    } else {
+      await addGame(modalForm);
       setIsModalOpen(false);
     }
   }

@@ -47,7 +47,7 @@ Filtering by game category ( on the game page ).
 
 Filtering by customer/game creation date.
 
-## Points of improvement
+## Points to improve
 
 - [ ] Adjust typescript types.
 

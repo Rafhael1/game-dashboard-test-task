@@ -8,7 +8,6 @@ import { faAdd, faEdit, faTrash, faSpinner } from '@fortawesome/free-solid-svg-i
 import Button from '../../components/button/button';
 import Modal from '../../components/modal/modal';
 import filterData from '../../utils/filterData';
-import { addCustomer, deleteCustomer, editCustomer } from '../../services/customerService';
 import ConfirmDialog from '../../components/confirmDialog/confirmDialog';
 import { Category } from '../../interfaces/categories';
 
@@ -42,11 +41,10 @@ const Filter = ({ categories, handleOnChange, values }: FilterProps) => {
 };
 
 const Customers = () => {
-  const { customersData, getCustomers, loading } = useContext(CustomerContext);
+  const { customersData, getCustomers, addCustomer, editCustomer, deleteCustomer, isLoadingSubmit, loading } = useContext(CustomerContext);
   const { categories, getCategories } = useContext(CategoriesContext);
   
   const [canSaveNew, setCanSaveNew] = useState(false);
-  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [editId, setEditId] = useState<any>(null); // Used to delete too
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -141,30 +139,16 @@ const Customers = () => {
   };
 
   const handleDeleteCustomer = async() => {
-    try {
-      setIsLoadingSubmit(true);
-      await deleteCustomer(editId);
-      await getCustomers();
-      setIsLoadingSubmit(false);
-      setIsDeleteModalOpen(false);
-    } catch (error) {
-      setIsDeleteModalOpen(false);
-    }
+    await deleteCustomer(editId);
+    setIsDeleteModalOpen(false);  
   };
 
   const handleModalSave = async() => {
-    setIsLoadingSubmit(true);
-    try {
-      if(isEditing && editId){
-        await editCustomer(editId, modalForm);
-      } else {
-        await addCustomer(modalForm);
-      }
+    if(isEditing && editId){
+      await editCustomer(editId, modalForm);
       setIsModalOpen(false);
-      await getCustomers();  
-      setIsLoadingSubmit(false);
-    } catch (error) {
-      setIsLoadingSubmit(false);
+    } else {
+      await addCustomer(modalForm);
       setIsModalOpen(false);
     }
   }

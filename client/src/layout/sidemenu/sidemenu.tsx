@@ -54,7 +54,7 @@ const SideMenu = () => {
 
   return (
     <div ref={backdropRef} className="bg-background-secondary">          
-      <button onClick={() => toggleSidebar()} data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" className="inline-flex items-center p-2 mt-0 ml-3 text-sm text-gray-500 rounded-lg md:hidden  focus:outline-none focus:ring-2 dark:text-gray-400 hover:bg-gray-700 focus:ring-gray-600">
+      <button onClick={() => toggleSidebar()} data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" className="inline-flex items-center p-2 mt-0 ml-3 text-sm rounded-lg md:hidden  focus:outline-none focus:ring-2 text-gray-400 hover:bg-gray-700 focus:ring-gray-600">
         <IconBase icon={faBars} size='lg' />
       </button>
       <aside id="logo-sidebar" className={`${isSidebarOpen ? '' : 'hidden'} transition-all fixed top-0 left-0 z-40 w-64 h-screen  sm:translate-x-0`} aria-label="Sidebar">

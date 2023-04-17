@@ -56,7 +56,7 @@ const ConfirmDialog = ({ message, isOpen, onClose, onConfirm, title, loading }: 
                 </p>
               </div>
               {/* <!-- Modal footer --> */}
-              <div className='flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600'>
+              <div className='flex items-center p-6 space-x-2 border-t rounded-b border-gray-600'>
                 <Button
                   data-modal-hide='staticModal'
                   type='button'

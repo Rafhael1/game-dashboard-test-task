@@ -53,7 +53,7 @@ const Modal = ({ children, isModalOpen, disabledSave, handleClose, onConfirm, ti
                 {children}
               </div>
               {/* <!-- Modal footer --> */}
-              <div className='flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600'>
+              <div className='flex items-center p-6 space-x-2 border-t rounded-b border-gray-600'>
                 <Button
                   disabled={disabledSave}
                   data-modal-hide='staticModal'

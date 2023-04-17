@@ -10,10 +10,14 @@ import { CustomerProvider } from './context/customerContext'
 import { CategoriesProvider } from './context/categoriesContext';
 import { GamesProvider } from './context/gamesContext';
 
+import { ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
     <div className="m-0 max-w-screen min-h-screen bg-background">
+    <ToastContainer />
       <GamesProvider>
         <CategoriesProvider>
           <CustomerProvider>
