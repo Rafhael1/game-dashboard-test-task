@@ -20,7 +20,7 @@ const IconButton = ({ children, onClick, color }: IconButtonProps) => {
       case 'info':
         return 'bg-blue-500 hover:bg-blue-600';
       default:
-        return 'bg-gray-500 hover:bg-gray-600';
+        return 'bg-primary hover:bg-indigo-500';
     }
   };
 
