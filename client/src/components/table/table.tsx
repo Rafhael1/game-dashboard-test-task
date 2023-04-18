@@ -133,7 +133,7 @@ const Table = ({ columns, data, filter, isLoading }: TableProps) => {
                 <IconBase icon={faArrowRight} size='lg' />
               </IconButton>
             </div>
-            <div className='justify-end'>
+            <div className='right-2 absolute'>
               <h4 className='pt-1 text-normal font-bold'>Total Pages: {totalPages}</h4>
             </div>
           </tfoot>
