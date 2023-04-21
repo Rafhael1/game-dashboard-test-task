@@ -6,7 +6,10 @@ interface CategoriesProviderProps {
 }
 
 interface CategoriesContextProps {
-  categories: any;
+  categories?: {
+    id: number;
+    name: string;
+  }[];
   getCategories: () => Promise<void>;
   loading: boolean;
 }

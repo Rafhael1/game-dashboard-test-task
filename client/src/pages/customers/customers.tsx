@@ -1,7 +1,6 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { IconBase, Table } from '../../components';
 import { CustomerContext } from '../../context/customerContext';
-import { CategoriesContext } from '../../context/categoriesContext';
 import { format, parseISO } from 'date-fns'
 import IconButton from '../../components/iconButton/iconButton';
 import { faAdd, faEdit, faTrash, faSpinner } from '@fortawesome/free-solid-svg-icons';
@@ -9,10 +8,8 @@ import Button from '../../components/button/button';
 import Modal from '../../components/modal/modal';
 import filterData from '../../utils/filterData';
 import ConfirmDialog from '../../components/confirmDialog/confirmDialog';
-import { Category } from '../../interfaces/categories';
 
 interface FilterProps {
-  categories: Category[];
   handleOnChange: (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void;
   values: {
     startDate?: string;
@@ -23,7 +20,7 @@ interface FilterProps {
   };
 }
 
-const Filter = ({ categories, handleOnChange, values }: FilterProps) => {
+const Filter = ({ handleOnChange, values }: FilterProps) => {
   return (
     <> 
      {/* Creation Date  */}
@@ -42,9 +39,7 @@ const Filter = ({ categories, handleOnChange, values }: FilterProps) => {
 
 const Customers = () => {
   const { customersData, getCustomers, addCustomer, editCustomer, deleteCustomer, isLoadingSubmit, loading } = useContext(CustomerContext);
-  const { categories, getCategories } = useContext(CategoriesContext);
   
-  const [canSaveNew, setCanSaveNew] = useState(false);
   const [editId, setEditId] = useState<any>(null); // Used to delete too
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -84,7 +79,6 @@ const Customers = () => {
       ...modalForm,
       [e.target.name]: e.target.value,
     });
-    setCanSaveNew(!!(modalForm.name && modalForm.email && modalForm.address));
   };
 
   const tableColumns = [
@@ -161,7 +155,6 @@ const Customers = () => {
 
   useEffect(() => {
     getCustomers();
-    getCategories();
   }, []);
 
 
@@ -177,7 +170,7 @@ const Customers = () => {
     <Table
       columns={tableColumns}
       data={customersDataAux.data}
-      filter={<Filter values={modalForm} handleOnChange={handleOnChange} categories={categories} />}
+      filter={<Filter values={modalForm} handleOnChange={handleOnChange} />}
       isLoading={loading}
     />
     <Modal disabledSave={false} onConfirm={handleModalSave} loading={isLoadingSubmit} title={isEditing ? 'Edit Customer' : 'Create Customer'} handleClose={() => setIsModalOpen(false)} isModalOpen={isModalOpen}>

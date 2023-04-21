@@ -6,6 +6,9 @@ This the dashboard for the test assignment.
 
 ## How to run
 
+### Prerequisites
+Node.js version 18.14.2 (lts as of 20-04-2023)
+
 1. Clone the repository
 
 2. Install dependencies
@@ -63,5 +66,5 @@ redux and so I'm not used to the context way of doing things.
 The server is running on port 8080, and
 the client is running on port 3000.
 
-## Authors
+## Author
 Rafhael Marques de Lima Freitas
